@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 	return 1;
     }
 
-    Analyzer analyzer(std::cout);
+    Analyzer analyzer(std::cout, pcap_datalink(p));
 
     while(1) {
 	struct pcap_pkthdr* head;

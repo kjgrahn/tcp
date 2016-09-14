@@ -32,11 +32,16 @@
 #include <pcap/pcap.h>
 
 
-struct Analyzer {
-    explicit Analyzer(std::ostream& os);
+class Analyzer {
+public:
+    Analyzer(std::ostream& os, int link);
     void feed(const pcap_pkthdr* head,
 	      const u_char* data);
     void end();
+
+private:
+    std::ostream& os;
+    const int link;
 };
 
 #endif

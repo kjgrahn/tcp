@@ -32,3 +32,20 @@
 #include <getopt.h>
 
 #include <pcap/pcap.h>
+
+
+Analyzer::Analyzer(std::ostream& os, int link)
+    : os(os),
+      link(link)
+{}
+
+void Analyzer::feed(const pcap_pkthdr* head,
+		    const u_char* data)
+{
+    os << '.' << std::flush;
+}
+
+void Analyzer::end()
+{
+    os << '\n';
+}
