@@ -10,7 +10,8 @@ all: test/test
 
 INSTALLBASE=/usr/local
 
-libtcp.a:
+libtcp.a: analyzer.o
+libtcp.a: hexdump.o
 	$(AR) -r $@ $^
 
 tcp: main.o libtcp.a
@@ -25,10 +26,10 @@ check: test/test
 checkv: test/test
 	valgrind -q ./test/test -v
 
-test/libtest.a:
+test/libtest.a: test/hexdump.o
 	$(AR) -r $@ $^
 
-test/test_%.o: CPPFLAGS+=-I.
+test/%.o: CPPFLAGS+=-I.
 
 test/test.cc: test/libtest.a
 	orchis -o $@ $^
@@ -62,9 +63,14 @@ love:
 $(shell mkdir -p dep/test)
 DEPFLAGS=-MT $@ -MMD -MP -MF dep/$*.Td
 COMPILE.cc=$(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+COMPILE.c=$(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 
 %.o: %.cc
 	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+	@mv dep/$*.{Td,d}
+
+%.o: %.c
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
 	@mv dep/$*.{Td,d}
 
 dep/%.d: ;

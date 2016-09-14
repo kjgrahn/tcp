@@ -31,6 +31,7 @@
 
 #include <pcap/pcap.h>
 
+#include "analyzer.h"
 
 namespace {
     template <class T, class It>
@@ -145,6 +146,24 @@ int main(int argc, char** argv)
     if(!p) {
 	return 1;
     }
+
+    Analyzer analyzer(std::cout);
+
+    while(1) {
+	struct pcap_pkthdr* head;
+	const u_char* data;
+	int rc = pcap_next_ex(p, &head, &data);
+
+	if(rc==0) continue;
+	if(rc==-2) break;
+	if(rc==-1) {
+	    std::cerr << pcap_geterr(p) << '\n';
+	    break;
+	}
+
+	analyzer.feed(head, data);
+    }
+    analyzer.end();
 
     return 0;
 }

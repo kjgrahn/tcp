@@ -5,3 +5,5 @@ tcp
 version.c
 TAGS
 dep/
+test/test
+test/test.cc
