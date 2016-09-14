@@ -1,0 +1,62 @@
+.ss 12 0
+.de BP
+.IP \\fB\\$*
+..
+.
+.TH tcp 1 "SEP 2016" Tcp "User Manuals"
+.
+.
+.SH "NAME"
+tcp \- replacement for 'tcpflow -CDJ'
+.
+.SH "SYNOPSIS"
+.B tcp
+.RB [ \-i
+.IR iface
+|
+.B \-r
+.IR file ]
+.RI [ expression ]
+.
+.SH "DESCRIPTION"
+.B tcp
+(I couldn't come up with a better name)
+is a tool for watching binary protocols over TCP,
+when TCP itself is trouble-free.
+.PP
+.BR tcpdump (1)
+gives you, for this purpose, too many details and
+makes it hard to focus on just the payload.
+.BR tcpflow (1)
+is mostly intended to save different flows to files (and, it seems, focuses
+on application-level protocols like HTTP).
+With the
+.B \-CD
+options to print to stdout it is underdeveloped: the output
+lacks timestamps and SYN/FIN/RST information.
+.
+.SH "OPTIONS"
+.
+.BP \-i\ \fIiface
+Listen on
+.IR iface ,
+e.g.
+.BR eth0 ,
+.B lo
+or
+.BR any .
+.
+.BP \-r\ \fIfile
+Read packets from
+.IR file .
+.
+.IP expr
+BPF filter to apply to the interface.
+.
+.SH "AUTHOR"
+J\(:orgen Grahn \fI\[fo]grahn+src@snipabacken.se\[fc]
+.
+.SH "SEE ALSO"
+.BR pcap-filter (7),
+.BR tcpdump (1),
+.BR tcpflow (1).

@@ -1,0 +1,7 @@
+*.o
+lib*.a
+Makefile.bak
+tcp
+version.c
+TAGS
+dep/
