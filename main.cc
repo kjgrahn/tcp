@@ -161,7 +161,7 @@ int main(int argc, char** argv)
 	    break;
 	}
 
-	analyzer.feed(head, data);
+	analyzer.feed(*head, data);
     }
     analyzer.end();
 

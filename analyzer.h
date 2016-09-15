@@ -35,7 +35,7 @@
 class Analyzer {
 public:
     Analyzer(std::ostream& os, int link);
-    void feed(const pcap_pkthdr* head,
+    void feed(const pcap_pkthdr& head,
 	      const u_char* data);
     void end();
 

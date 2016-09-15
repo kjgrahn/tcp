@@ -26,26 +26,36 @@
  */
 #include "analyzer.h"
 
-#include <string>
+#include "hexdump.h"
+
 #include <iostream>
 #include <sstream>
 #include <getopt.h>
 
 #include <pcap/pcap.h>
 
-
 Analyzer::Analyzer(std::ostream& os, int link)
     : os(os),
       link(link)
 {}
 
-void Analyzer::feed(const pcap_pkthdr* head,
+void Analyzer::feed(const pcap_pkthdr& head,
 		    const u_char* data)
 {
-    os << '.' << std::flush;
+    if(head.caplen < head.len) return;
+
+    const void* p = data;
+    const void* const q = data + head.len;
+    const char* prefix = "- ";
+    while(p!=q) {
+	char buf[70];
+	p = hexdump(buf, sizeof buf, p, q);
+	os << prefix << buf << '\n';
+	prefix = "  ";
+    }
+
+    os << std::flush;
 }
 
 void Analyzer::end()
-{
-    os << '\n';
-}
+{}
