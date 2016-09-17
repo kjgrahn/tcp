@@ -24,39 +24,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
-
-#include "hexdump.h"
 #include "timeval.h"
 
 #include <iostream>
-#include <sstream>
-#include <getopt.h>
+#include <ctime>
 
-#include <pcap/pcap.h>
-
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
-
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
+/**
+ * Print a timeval with millisecond resolution, but skip the date.
+ */
+std::ostream& operator<< (std::ostream& os, const struct timeval& val)
 {
-    if(head.caplen < head.len) return;
-
-    const void* p = data;
-    const void* const q = data + head.len;
-    const char* prefix = "- ";
-    while(p!=q) {
-	char buf[70];
-	p = hexdump(buf, sizeof buf, p, q);
-	os << prefix << head.ts << ' ' << buf << '\n';
-	prefix = "  ";
-    }
-
-    os << std::flush;
+    struct tm tm = *std::localtime(&val.tv_sec);
+    char buf[9];
+    std::strftime(buf, sizeof buf, "%T", &tm);
+    os << buf;
+    sprintf(buf, ".%03u", unsigned(val.tv_usec + 500) / 1000);
+    return os << buf;
 }
-
-void Analyzer::end()
-{}

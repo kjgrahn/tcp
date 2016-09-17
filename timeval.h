@@ -1,4 +1,5 @@
-/*
+/* -*- c++ -*-
+ *
  * Copyright (c) 2016 Jörgen Grahn
  * All rights reserved.
  * 
@@ -24,39 +25,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
+#ifndef TCP_TIMEVAL_H
+#define TCP_TIMEVAL_H
 
-#include "hexdump.h"
-#include "timeval.h"
+#include <iosfwd>
 
-#include <iostream>
-#include <sstream>
-#include <getopt.h>
+struct timeval;
+std::ostream& operator<< (std::ostream& os, const struct timeval& val);
 
-#include <pcap/pcap.h>
-
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
-
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
-{
-    if(head.caplen < head.len) return;
-
-    const void* p = data;
-    const void* const q = data + head.len;
-    const char* prefix = "- ";
-    while(p!=q) {
-	char buf[70];
-	p = hexdump(buf, sizeof buf, p, q);
-	os << prefix << head.ts << ' ' << buf << '\n';
-	prefix = "  ";
-    }
-
-    os << std::flush;
-}
-
-void Analyzer::end()
-{}
+#endif

@@ -11,6 +11,7 @@ all: test/test
 INSTALLBASE=/usr/local
 
 libtcp.a: analyzer.o
+libtcp.a: timeval.o
 libtcp.a: hexdump.o
 	$(AR) -r $@ $^
 
