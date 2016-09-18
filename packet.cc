@@ -103,7 +103,9 @@ Range tcp(int linktype, Range frame)
     unsigned version = (*p) >> 4;
     if(version==4) {
 	unsigned ihl = *p & 0x0f;
-	p += 6;
+	p += 2;
+        unsigned totlen = get16(p);
+	p += 4;
 	unsigned frag = get16(p);
 	if(frag & 0x3fff) {
 	    return frame.clear();
@@ -114,6 +116,7 @@ Range tcp(int linktype, Range frame)
 	    return frame.clear();
 	}
 
+        frame.trim(totlen);
 	frame.pop(4 * ihl);
 	return frame;
     }

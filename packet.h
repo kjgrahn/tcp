@@ -49,6 +49,9 @@ public:
 	a += n;
 	a = std::min(a, b);
     }
+    void trim(size_t n) {
+        b = std::min(a + n, b);
+    }
     unsigned eat8() { return *a++; }
     unsigned eat16();
 
