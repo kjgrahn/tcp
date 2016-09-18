@@ -1,4 +1,5 @@
-/*
+/* -*- c++ -*-
+ *
  * Copyright (c) 2016 Jörgen Grahn
  * All rights reserved.
  * 
@@ -24,44 +25,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
+#ifndef TCP_PACKET_H
+#define TCP_PACKET_H
 
-#include "hexdump.h"
-#include "timeval.h"
-#include "packet.h"
-
-#include <iostream>
-#include <sstream>
-#include <getopt.h>
+#include <cstdint>
+#include <algorithm>
 
 #include <pcap/pcap.h>
 
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
 
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
-{
-    const Range frame{head, data};
-    if(frame.empty()) return;
+class Range {
+public:
+    Range(const uint8_t* a, const uint8_t* b)
+	: a(a), b(b)
+    {}
+    Range(const pcap_pkthdr& head,
+	  const u_char* data);
 
-    const Range payload = tcp(link, frame);
-    if(payload.empty()) return;
-
-    const void* p = payload.begin();
-    const void* const q = payload.end();
-    const char* prefix = "- ";
-    while(p!=q) {
-	char buf[70];
-	p = hexdump(buf, sizeof buf, p, q);
-	os << prefix << head.ts << ' ' << buf << '\n';
-	prefix = "  ";
+    void clear() {
+	a = b = nullptr;
     }
+    void pop(size_t n) {
+	a += n;
+	a = std::min(a, b);
+    }
+    unsigned eat8() { return *a++; }
+    unsigned eat16();
 
-    os << std::flush;
-}
+    const uint8_t* begin() const { return a; }
+    const uint8_t* end() const { return b; }
+    bool empty() const { return a==b; }
 
-void Analyzer::end()
-{}
+private:
+    const uint8_t* a;
+    const uint8_t* b;
+};
+
+Range unlink(int linktype, Range frame);
+Range tcp(int linktype, Range frame);
+
+#endif

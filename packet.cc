@@ -24,44 +24,77 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
-
-#include "hexdump.h"
-#include "timeval.h"
 #include "packet.h"
 
-#include <iostream>
-#include <sstream>
-#include <getopt.h>
+#include <net/ethernet.h>
 
-#include <pcap/pcap.h>
-
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
-
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
-{
-    const Range frame{head, data};
-    if(frame.empty()) return;
-
-    const Range payload = tcp(link, frame);
-    if(payload.empty()) return;
-
-    const void* p = payload.begin();
-    const void* const q = payload.end();
-    const char* prefix = "- ";
-    while(p!=q) {
-	char buf[70];
-	p = hexdump(buf, sizeof buf, p, q);
-	os << prefix << head.ts << ' ' << buf << '\n';
-	prefix = "  ";
+namespace {
+    unsigned get16(const u_char* p)
+    {
+	unsigned n = *p++;
+	n = (n<<8) + *p;
+	return n;
     }
-
-    os << std::flush;
 }
 
-void Analyzer::end()
-{}
+
+Range::Range(const pcap_pkthdr& head,
+	     const u_char* data)
+    : a(data),
+      b(data + head.len)
+{
+    if(head.caplen < head.len) {
+	// ignore incompletely captured frames
+	b = a;
+    }
+}
+
+unsigned Range::eat16()
+{
+    unsigned n = get16(a);
+    pop(2);
+    return n;
+}
+
+/**
+ * Stripping the link-layer from a frame; extracting IPv4/IPv6,
+ * or returning an empty range.
+ */
+Range unlink(int linktype, Range frame)
+{
+    switch(linktype) {
+    case DLT_EN10MB: {
+	frame.pop(6 + 6);
+	auto etype = frame.eat16();
+	if(etype==ETHERTYPE_VLAN) {
+	    frame.pop(2);
+	    etype = frame.eat16();
+	}
+	switch(etype) {
+	case ETHERTYPE_IP:
+	case ETHERTYPE_IPV6:
+	    break;
+	default:
+	    frame.clear();
+	    break;
+	}
+	break;
+    }
+    case DLT_RAW:
+	break;
+    default:
+	frame.clear();
+	break;
+    }
+
+    return frame;
+}
+
+
+/**
+ * Stripping everything but the TCP content, if any.
+ */
+Range tcp(int linktype, Range frame)
+{
+    return unlink(linktype, frame);
+}
