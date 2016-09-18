@@ -42,8 +42,8 @@ public:
     Range(const pcap_pkthdr& head,
 	  const u_char* data);
 
-    void clear() {
-	a = b = nullptr;
+    Range clear() {
+	a = b = nullptr; return *this;
     }
     void pop(size_t n) {
 	a += n;

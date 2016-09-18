@@ -96,5 +96,37 @@ Range unlink(int linktype, Range frame)
  */
 Range tcp(int linktype, Range frame)
 {
-    return unlink(linktype, frame);
+    frame = unlink(linktype, frame);
+    if(frame.empty()) return frame;
+
+    auto p = frame.begin();
+    unsigned version = (*p) >> 4;
+    if(version==4) {
+	unsigned ihl = *p & 0x0f;
+	p += 6;
+	unsigned frag = get16(p);
+	if(frag & 0x3fff) {
+	    return frame.clear();
+	}
+	p += 3;
+	unsigned proto = *p;
+	if(proto != 6) {
+	    return frame.clear();
+	}
+
+	frame.pop(4 * ihl);
+	return frame;
+    }
+    else if(version==6) {
+	// lame implementation
+	if(p[6]!=6) {
+	    return frame.clear();
+	}
+
+	frame.pop(40);
+	return frame;
+    }
+    else {
+	return frame.clear();
+    }
 }
