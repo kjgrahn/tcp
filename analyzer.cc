@@ -61,6 +61,14 @@ void Analyzer::feed(const pcap_pkthdr& head,
 
     const Tcp segment{payload};
     if(!segment.valid()) return;
+
+    if(segment.flag_only()) {
+        os << head.ts << ' '
+           << color(segment.client()) << segment.src_dst() << "  "
+           << segment.flag_desc() << reset << std::endl;
+        return;
+    }
+
     if(segment.empty()) return;
 
     const void* p = segment.begin();

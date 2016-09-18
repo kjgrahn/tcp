@@ -36,6 +36,12 @@ Tcp::Tcp(Range p)
     payload.pop(8);
     unsigned drf = payload.eat16();
     unsigned offset = drf>>12;
+    unsigned flags = drf & 0x3f;
+
+    if(flags & 0x01) flag = "FIN";
+    if(flags & 0x02) flag = "SYN";
+    if(flags & 0x04) flag = "RST";
+
     payload.pop(offset * 4 - 4 - 8 - 2);
 }
 
