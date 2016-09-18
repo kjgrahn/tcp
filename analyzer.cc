@@ -40,7 +40,7 @@
 namespace {
     const char* color(bool client)
     {
-	return client? "\033[0;32m" : "\033[0;33m";
+	return client? "\033[0;33m" : "\033[0;32m";
     }
     constexpr char reset[] = "\033[0m";
 }
