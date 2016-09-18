@@ -1,4 +1,5 @@
-/*
+/* -*- c++ -*-
+ *
  * Copyright (c) 2016 Jörgen Grahn
  * All rights reserved.
  * 
@@ -24,61 +25,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
+#ifndef TCP_TCP_H
+#define TCP_TCP_H
 
-#include "hexdump.h"
-#include "timeval.h"
 #include "packet.h"
-#include "tcp.h"
+#include <string>
 
-#include <iostream>
-#include <sstream>
-#include <getopt.h>
+/**
+ * A possible TCP segment, found in IP payload known to be TCP.
+ */
+class Tcp {
+public:
+    explicit Tcp(Range payload);
 
-#include <pcap/pcap.h>
+    bool valid() const { return true; }
 
-namespace {
-    const char* color(bool client)
-    {
-	return client? "\033[0;32m" : "\033[0;33m";
-    }
-    constexpr char reset[] = "\033[0m";
-}
+    bool client() const { return src > dst; }
+    std::string src_dst() const;
 
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
+    bool syn() const;
+    bool fin() const;
+    bool rst() const;
+    bool ack() const;
 
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
-{
-    const Range frame{head, data};
-    if(frame.empty()) return;
+    const uint8_t* begin() const { return payload.begin(); }
+    const uint8_t* end() const { return payload.end(); }
 
-    const Range payload = tcp(link, frame);
-    if(payload.empty()) return;
+private:
+    Range payload;
+    unsigned src;
+    unsigned dst;
+};
 
-    const Tcp segment{payload};
-    if(!segment.valid()) return;
-
-    const void* p = segment.begin();
-    const void* const q = segment.end();
-
-    char buf[70];
-    p = hexdump(buf, sizeof buf, p, q);
-
-    os << head.ts << ' ' << segment.src_dst() << "  "
-       << color(segment.client()) << buf << reset << '\n';
-
-    while(p!=q) {
-	p = hexdump(buf, sizeof buf, p, q);
-	os << "                             "
-	   << color(segment.client()) << buf << reset << '\n';
-    }
-
-    os << std::flush;
-}
-
-void Analyzer::end()
-{}
+#endif

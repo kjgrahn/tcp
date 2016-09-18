@@ -24,61 +24,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
-
-#include "hexdump.h"
-#include "timeval.h"
-#include "packet.h"
 #include "tcp.h"
 
-#include <iostream>
-#include <sstream>
-#include <getopt.h>
+#include <cstdio>
 
-#include <pcap/pcap.h>
-
-namespace {
-    const char* color(bool client)
-    {
-	return client? "\033[0;32m" : "\033[0;33m";
-    }
-    constexpr char reset[] = "\033[0m";
-}
-
-Analyzer::Analyzer(std::ostream& os, int link)
-    : os(os),
-      link(link)
-{}
-
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
+Tcp::Tcp(Range payload)
+    : payload(payload)
 {
-    const Range frame{head, data};
-    if(frame.empty()) return;
-
-    const Range payload = tcp(link, frame);
-    if(payload.empty()) return;
-
-    const Tcp segment{payload};
-    if(!segment.valid()) return;
-
-    const void* p = segment.begin();
-    const void* const q = segment.end();
-
-    char buf[70];
-    p = hexdump(buf, sizeof buf, p, q);
-
-    os << head.ts << ' ' << segment.src_dst() << "  "
-       << color(segment.client()) << buf << reset << '\n';
-
-    while(p!=q) {
-	p = hexdump(buf, sizeof buf, p, q);
-	os << "                             "
-	   << color(segment.client()) << buf << reset << '\n';
-    }
-
-    os << std::flush;
+    src = payload.eat16();
+    dst = payload.eat16();
+    payload.pop(8);
+    unsigned drf = payload.eat16();
+    unsigned offset = drf>>12;
+    payload.pop(offset * 4 - 4 - 8 - 2);
 }
 
-void Analyzer::end()
-{}
+std::string Tcp::src_dst() const
+{
+    char buf[20];
+    std::sprintf(buf, "%5u -> %5u", src, dst);
+    return buf;
+}
