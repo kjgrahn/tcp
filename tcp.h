@@ -50,6 +50,7 @@ public:
 
     const uint8_t* begin() const { return payload.begin(); }
     const uint8_t* end() const { return payload.end(); }
+    bool empty() const { return payload.empty(); }
 
 private:
     Range payload;

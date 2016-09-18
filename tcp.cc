@@ -28,8 +28,8 @@
 
 #include <cstdio>
 
-Tcp::Tcp(Range payload)
-    : payload(payload)
+Tcp::Tcp(Range p)
+    : payload(p)
 {
     src = payload.eat16();
     dst = payload.eat16();

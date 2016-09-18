@@ -61,6 +61,7 @@ void Analyzer::feed(const pcap_pkthdr& head,
 
     const Tcp segment{payload};
     if(!segment.valid()) return;
+    if(segment.empty()) return;
 
     const void* p = segment.begin();
     const void* const q = segment.end();
@@ -68,8 +69,9 @@ void Analyzer::feed(const pcap_pkthdr& head,
     char buf[70];
     p = hexdump(buf, sizeof buf, p, q);
 
-    os << head.ts << ' ' << segment.src_dst() << "  "
-       << color(segment.client()) << buf << reset << '\n';
+    os << head.ts << ' '
+       << color(segment.client()) << segment.src_dst() << "  "
+       << buf << reset << '\n';
 
     while(p!=q) {
 	p = hexdump(buf, sizeof buf, p, q);
