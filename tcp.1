@@ -23,6 +23,7 @@ tcp \- replacement for 'tcpflow -CDJ'
 (I couldn't come up with a better name)
 is a tool for watching binary protocols over TCP,
 when TCP itself is trouble-free.
+.
 .PP
 .BR tcpdump (1)
 gives you, for this purpose, too many details and
@@ -34,6 +35,34 @@ With the
 .B \-CD
 options to print to stdout it is underdeveloped: the output
 lacks timestamps and SYN/FIN/RST information.
+.
+.PP
+.B tcp
+simply prints the contents of each TCP segment, and the
+.BR SYN / FIN / RST
+flags.  It prints the timestamp with millisecond precision,
+prints the source and destination ports,
+and colorizes the output so that data to low ports (presumably
+client-to-server) is yellow and other data is green.
+.
+.SS "Limitations"
+.IP \- 3x
+IP fragments are ignored.
+.IP \-
+Packets with IPv6 extension headers aren't handled well.
+.IP \-
+Odd capture formats aren't handled well.
+I've only added support for Ethernet captures, VLAN, and raw IP captures.
+.IP \-
+There's no handling of TCP state.  Segments are printed as-is;
+if data is retransmitted you'll see it twice.
+ACKs and sequence numbers in general aren't handled at all.
+(Thus the \[lq]when TCP itself is trouble-free\[rq] above).
+.IP \-
+TCP flags travelling together with data are ignored and not printed.
+Experiments seem to show this mostly happens to FIN.
+.IP \-
+It's all a quick hack.
 .
 .SH "OPTIONS"
 .
@@ -49,9 +78,13 @@ or
 .BP \-r\ \fIfile
 Read packets from
 .IR file .
+.B -
+means standard input.
 .
-.IP expr
-BPF filter to apply to the interface.
+.IP \fIexpression
+BPF filter to apply to the interface or file; see
+.BR pcap-filter (7)
+for syntax.
 .
 .SH "AUTHOR"
 J\(:orgen Grahn \fI\[fo]grahn+src@snipabacken.se\[fc]
