@@ -34,10 +34,17 @@
  */
 std::ostream& operator<< (std::ostream& os, const struct timeval& val)
 {
-    struct tm tm = *std::localtime(&val.tv_sec);
+    auto t = val.tv_sec;
+    unsigned msec = (val.tv_usec + 500) / 1000;
+    if(msec==1000) {
+	t++;
+	msec = 0;
+    }
+
+    struct tm tm = *std::localtime(&t);
     char buf[9];
     std::strftime(buf, sizeof buf, "%T", &tm);
     os << buf;
-    sprintf(buf, ".%03u", unsigned(val.tv_usec + 500) / 1000);
+    sprintf(buf, ".%03u", msec);
     return os << buf;
 }
