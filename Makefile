@@ -30,6 +30,7 @@ checkv: test/test
 	valgrind -q ./test/test -v
 
 test/libtest.a: test/hexdump.o
+test/libtest.a: test/timeval.o
 	$(AR) -r $@ $^
 
 test/%.o: CPPFLAGS+=-I.
