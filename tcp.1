@@ -45,25 +45,6 @@ prints the source and destination ports,
 and colorizes the output so that data to low ports (presumably
 client-to-server) is yellow and other data is green.
 .
-.SS "Limitations"
-.IP \- 3x
-IP fragments are ignored.
-.IP \-
-Packets with IPv6 extension headers aren't handled well.
-.IP \-
-Odd capture formats aren't handled well.
-I've only added support for Ethernet captures, VLAN, and raw IP captures.
-.IP \-
-There's no handling of TCP state.  Segments are printed as-is;
-if data is retransmitted you'll see it twice.
-ACKs and sequence numbers in general aren't handled at all.
-(Thus the \[lq]when TCP itself is trouble-free\[rq] above).
-.IP \-
-TCP flags travelling together with data are ignored and not printed.
-Experiments seem to show this mostly happens to FIN.
-.IP \-
-It's all a quick hack.
-.
 .SH "OPTIONS"
 .
 .BP \-i\ \fIiface
@@ -86,10 +67,46 @@ BPF filter to apply to the interface or file; see
 .BR pcap-filter (7)
 for syntax.
 .
+.SH "LIMITATIONS"
+.IP \- 3x
+IP fragments are ignored.
+.IP \-
+Packets with IPv6 extension headers aren't handled well.
+.IP \-
+Odd capture formats aren't handled well.
+I've only added support for Ethernet captures, VLAN, and raw IP captures.
+.IP \-
+There's no handling of TCP state.  Segments are printed as-is;
+if data is retransmitted you'll see it twice.
+ACKs and sequence numbers in general aren't handled at all.
+(Thus the \[lq]when TCP itself is trouble-free\[rq] above).
+.IP \-
+TCP flags travelling together with data are ignored and not printed.
+Experiments seem to show this mostly happens to FIN.
+.IP \-
+TCP sessions are identified only by the port numbers involved.
+This is for readability purposes, but also makes it hard to watch
+many sessions between many hosts.
+.IP \-
+It's all a quick hack.
+You probably shouldn't feed
+.B tcp
+untrusted data; there are ample opportunities for someone to
+feed it crafted packets which makes it crash or worse.
+.
+.PP
+If you need more, you should consider using
+.BR tcpdump (1),
+.BR tcpflow (1)
+or
+.BR tcptrace (1),
+or a combination.
+.
 .SH "AUTHOR"
 J\(:orgen Grahn \fI\[fo]grahn+src@snipabacken.se\[fc]
 .
 .SH "SEE ALSO"
 .BR pcap-filter (7),
 .BR tcpdump (1),
-.BR tcpflow (1).
+.BR tcpflow (1),
+.BR tcptrace (1).
