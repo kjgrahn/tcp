@@ -30,12 +30,13 @@
 
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 class timeval;
 
 class Output {
 public:
-    Output(std::ostream& os);
+    Output(std::ostream& os, unsigned width);
 
     void write(bool client, const timeval& tv,
 	       const std::string& peers,
@@ -47,6 +48,7 @@ public:
 
 private:
     std::ostream& os;
+    std::vector<char> bufv;
 };
 
 #endif

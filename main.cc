@@ -27,6 +27,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 #include <getopt.h>
 
 #include <pcap/pcap.h>
@@ -89,6 +90,15 @@ namespace {
 
 	return p;
     }
+
+    unsigned to_int(const std::string& s)
+    {
+	const char* p = s.c_str();
+	char* end;
+	unsigned n = std::strtoul(p, &end, 10);
+	if(*end) n = 0;
+	return n;
+    }
 }
 
 
@@ -98,24 +108,29 @@ int main(int argc, char** argv)
 
     const string prog = argv[0] ? argv[0] : "tcp";
     const string usage = string("usage: ")
-	+ prog + " [-i iface | -r file] [expression]\n"
+	+ prog + " [-w width] [-i iface | -r file] [expression]\n"
 	"       "
 	+ prog + " --help";
     constexpr struct option long_options[] = {
-	{"help", 0, 0, 'H'},
+	{"help",  0, 0, 'H'},
+	{"width", 1, 0, 'w'},
 	{0, 0, 0, 0}
     };
 
+    unsigned width = 80;
     std::string iface;
     std::string file;
     
     int ch;
-    while((ch = getopt_long(argc, argv, "i:r:",
+    while((ch = getopt_long(argc, argv, "w:i:r:",
 			    &long_options[0], 0)) != -1) {
 	switch(ch) {
 	case 'H':
 	    std::cout << usage << '\n';
 	    return 0;
+	    break;
+	case 'w':
+	    width = to_int(optarg);
 	    break;
 	case 'i':
 	    iface = optarg;
@@ -135,7 +150,10 @@ int main(int argc, char** argv)
 	}
     }
 
-    if(iface.empty() && file.empty()) {
+    bool bad_args = iface.empty() && file.empty();
+    bad_args |= width==0;
+
+    if(bad_args) {
 	std::cerr << usage << '\n';
 	return 1;
     }
@@ -147,7 +165,7 @@ int main(int argc, char** argv)
 	return 1;
     }
 
-    Analyzer analyzer(std::cout, pcap_datalink(p));
+    Analyzer analyzer(std::cout, width, pcap_datalink(p));
 
     while(1) {
 	struct pcap_pkthdr* head;

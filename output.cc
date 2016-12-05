@@ -32,17 +32,27 @@
 #include <iostream>
 
 
-Output::Output(std::ostream& os)
-    : os(os)
-{}
-
 namespace {
     const char* color(bool client)
     {
 	return client? "\033[0;33m" : "\033[0;32m";
     }
     constexpr char reset[] = "\033[0m";
+
+    unsigned inner(unsigned width)
+    {
+	// 23:55:05.235    22 -> 39602  nn ...
+	// -----12----- ------14------  ---
+	unsigned headwidth = 12+1+14+2;
+	width = std::max(width, headwidth + 3);
+	return width - headwidth;
+    }
 }
+
+Output::Output(std::ostream& os, unsigned width)
+    : os(os),
+      bufv(inner(width))
+{}
 
 void Output::write(bool client, const timeval& tv,
 		   const std::string& peers,
@@ -60,15 +70,15 @@ void Output::write(bool client, const timeval& tv,
 {
     const void* p = begin;
 
-    char buf[70];
-    p = hexdump(buf, sizeof buf, p, end);
+    char* const buf = bufv.data();
+    p = hexdump(buf, bufv.size(), p, end);
 
     os << tv << ' '
        << color(client) << peers << "  "
        << buf << '\n';
 
     while(p!=end) {
-	p = hexdump(buf, sizeof buf, p, end);
+	p = hexdump(buf, bufv.size(), p, end);
 	os << "                             "
 	   << buf << '\n';
     }

@@ -11,6 +11,8 @@ tcp \- replacement for 'tcpflow -CDJ'
 .
 .SH "SYNOPSIS"
 .B tcp
+.RB [ \-w
+.IR n ]
 .RB [ \-i
 .IR iface
 |
@@ -46,6 +48,9 @@ and colorizes the output so that data to low ports (presumably
 client-to-server) is yellow and other data is green.
 .
 .SH "OPTIONS"
+.
+.BP \-w,\ --width\ \fIn
+Output width; default 80 characters.
 .
 .BP \-i\ \fIiface
 Listen on
