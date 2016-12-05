@@ -1,7 +1,8 @@
-/*
+/* -*- c++ -*-
+ *
  * Copyright (c) 2016 Jörgen Grahn
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -12,7 +13,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -24,47 +25,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "analyzer.h"
+#ifndef TCP_OUTPUT_H
+#define TCP_OUTPUT_H
 
-#include "hexdump.h"
-#include "timeval.h"
-#include "packet.h"
-#include "tcp.h"
+#include <iosfwd>
+#include <string>
 
-#include <iostream>
+class timeval;
 
-#include <pcap/pcap.h>
+class Output {
+public:
+    Output(std::ostream& os);
 
-Analyzer::Analyzer(std::ostream& os, int link)
-    : output(os),
-      link(link)
-{}
+    void write(bool client, const timeval& tv,
+	       const std::string& peers,
+	       const std::string& flags);
+    void write(bool client, const timeval& tv,
+	       const std::string& peers,
+	       const void* begin,
+	       const void* end);
 
-void Analyzer::feed(const pcap_pkthdr& head,
-		    const u_char* data)
-{
-    const Range frame{head, data};
-    if(frame.empty()) return;
+private:
+    std::ostream& os;
+};
 
-    const Range payload = tcp(link, frame);
-    if(payload.empty()) return;
-
-    const Tcp segment{payload};
-    if(!segment.valid()) return;
-
-    if(segment.flag_only()) {
-	output.write(segment.client(), head.ts,
-		     segment.src_dst(),
-		     segment.flag_desc());
-        return;
-    }
-
-    if(segment.empty()) return;
-
-    output.write(segment.client(), head.ts,
-		 segment.src_dst(),
-		 segment.begin(), segment.end());
-}
-
-void Analyzer::end()
-{}
+#endif

@@ -28,7 +28,8 @@
 #ifndef TCP_ANALYZER_H
 #define TCP_ANALYZER_H
 
-#include <iosfwd>
+#include "output.h"
+
 #include <pcap/pcap.h>
 
 
@@ -40,7 +41,7 @@ public:
     void end();
 
 private:
-    std::ostream& os;
+    Output output;
     const int link;
 };
 

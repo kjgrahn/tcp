@@ -10,6 +10,7 @@ all: test/test
 
 INSTALLBASE=/usr/local
 
+libtcp.a: output.o
 libtcp.a: analyzer.o
 libtcp.a: tcp.o
 libtcp.a: packet.o
