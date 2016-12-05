@@ -36,7 +36,7 @@ class timeval;
 
 class Output {
 public:
-    Output(std::ostream& os, unsigned width);
+    Output(std::ostream& os, unsigned width, bool ascii);
 
     void write(bool client, const timeval& tv,
 	       const std::string& peers,
@@ -49,6 +49,7 @@ public:
 private:
     std::ostream& os;
     std::vector<char> bufv;
+    const bool ascii;
 };
 
 #endif

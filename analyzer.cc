@@ -35,8 +35,8 @@
 
 #include <pcap/pcap.h>
 
-Analyzer::Analyzer(std::ostream& os, unsigned width, int link)
-    : output(os, width),
+Analyzer::Analyzer(std::ostream& os, unsigned width, bool ascii, int link)
+    : output(os, width, ascii),
       link(link)
 {}
 

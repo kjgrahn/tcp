@@ -16,6 +16,7 @@ libtcp.a: tcp.o
 libtcp.a: packet.o
 libtcp.a: timeval.o
 libtcp.a: hexdump.o
+libtcp.a: asciidump.o
 	$(AR) -r $@ $^
 
 tcp: main.o libtcp.a

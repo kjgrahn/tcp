@@ -3,7 +3,7 @@
 .IP \\fB\\$*
 ..
 .
-.TH tcp 1 "SEP 2016" Tcp "User Manuals"
+.TH tcp 1 "DEC 2016" Tcp "User Manuals"
 .
 .
 .SH "NAME"
@@ -13,6 +13,7 @@ tcp \- replacement for 'tcpflow -CDJ'
 .B tcp
 .RB [ \-w
 .IR n ]
+.RB [ \-a ]
 .RB [ \-i
 .IR iface
 |
@@ -23,7 +24,7 @@ tcp \- replacement for 'tcpflow -CDJ'
 .SH "DESCRIPTION"
 .B tcp
 (I couldn't come up with a better name)
-is a tool for watching binary protocols over TCP,
+is a tool for watching mostly binary protocols over TCP,
 when TCP itself is trouble-free.
 .
 .PP
@@ -51,6 +52,10 @@ client-to-server) is yellow and other data is green.
 .
 .BP \-w,\ --width\ \fIn
 Output width; default 80 characters.
+.
+.BP \-a,\ --ascii
+Print as ASCII instead of hexdumped octets. Anything nonprintable
+is replaced by dots (so you lose information this way).
 .
 .BP \-i\ \fIiface
 Listen on

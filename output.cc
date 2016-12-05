@@ -28,6 +28,7 @@
 
 #include "timeval.h"
 #include "hexdump.h"
+#include "asciidump.h"
 
 #include <iostream>
 
@@ -49,9 +50,10 @@ namespace {
     }
 }
 
-Output::Output(std::ostream& os, unsigned width)
+Output::Output(std::ostream& os, unsigned width, bool ascii)
     : os(os),
-      bufv(inner(width))
+      bufv(inner(width)),
+      ascii(ascii)
 {}
 
 void Output::write(bool client, const timeval& tv,
@@ -69,16 +71,25 @@ void Output::write(bool client, const timeval& tv,
 		   const void* const end)
 {
     const void* p = begin;
-
     char* const buf = bufv.data();
-    p = hexdump(buf, bufv.size(), p, end);
+
+    auto dump = [this, buf, end](const void* p) {
+        if(ascii) {
+	    return asciidump(buf, bufv.size(), p, end);
+	}
+	else {
+	    return hexdump(buf, bufv.size(), p, end);
+	}
+    };
+
+    p = dump(p);
 
     os << tv << ' '
        << color(client) << peers << "  "
        << buf << '\n';
 
     while(p!=end) {
-	p = hexdump(buf, bufv.size(), p, end);
+	p = dump(p);
 	os << "                             "
 	   << buf << '\n';
     }
