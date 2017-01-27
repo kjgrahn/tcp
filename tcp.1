@@ -3,7 +3,7 @@
 .IP \\fB\\$*
 ..
 .
-.TH tcp 1 "JAN 2017" Tcp "User Manuals"
+.TH tcp 1 "FEB 2017" Tcp "User Manuals"
 .
 .
 .SH "NAME"
@@ -26,7 +26,7 @@ tcp \- replacement for 'tcpflow -CDJ'
 .B tcp
 (I couldn't come up with a better name)
 is a tool for watching mostly binary protocols over TCP,
-when TCP itself is trouble-free.
+in situations where TCP itself is trouble-free.
 .
 .PP
 .BR tcpdump (1)
@@ -92,7 +92,8 @@ Odd capture formats aren't handled well.
 I've only added support for Ethernet captures, VLAN, and raw IP captures.
 .IP \-
 There's no handling of TCP state.  Segments are printed as-is;
-if data is retransmitted you'll see it twice.
+if data is retransmitted you'll see it twice
+(this can be confusing).
 ACKs and sequence numbers in general aren't handled at all.
 (Thus the \[lq]when TCP itself is trouble-free\[rq] above).
 .IP \-
