@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,18 @@
 #include <iostream>
 
 
-namespace {
-    const char* color(bool client)
-    {
-	return client? "\033[0;33m" : "\033[0;32m";
-    }
-    constexpr char reset[] = "\033[0m";
+Color::Color(bool color)
+    : reset(color? "\033[0m" : "")
+{}
 
+const char* Color::operator() (bool client) const
+{
+    if(!reset[0]) return "";
+    return client? "\033[0;33m" : "\033[0;32m";
+}
+
+
+namespace {
     unsigned inner(unsigned width)
     {
 	// 23:55:05.235    22 -> 39602  nn ...
@@ -50,9 +55,11 @@ namespace {
     }
 }
 
-Output::Output(std::ostream& os, unsigned width, bool ascii)
+Output::Output(std::ostream& os, unsigned width,
+	       bool color, bool ascii)
     : os(os),
       bufv(inner(width)),
+      color(color),
       ascii(ascii)
 {}
 
@@ -62,7 +69,7 @@ void Output::write(bool client, const timeval& tv,
 {
     os << tv << ' '
        << color(client) << peers << "  "
-       << flags << reset << std::endl;
+       << flags << color.reset << std::endl;
 }
 
 void Output::write(bool client, const timeval& tv,
@@ -94,5 +101,5 @@ void Output::write(bool client, const timeval& tv,
 	   << buf << '\n';
     }
 
-    os << reset << std::flush;
+    os << color.reset << std::flush;
 }

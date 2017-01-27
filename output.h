@@ -1,6 +1,6 @@
 /* -*- c++ -*-
  *
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,16 @@
 
 class timeval;
 
+struct Color {
+    explicit Color(bool color);
+    const char* operator() (bool client) const;
+    const char* const reset;
+};
+
 class Output {
 public:
-    Output(std::ostream& os, unsigned width, bool ascii);
+    Output(std::ostream& os, unsigned width,
+	   bool color, bool ascii);
 
     void write(bool client, const timeval& tv,
 	       const std::string& peers,
@@ -49,6 +56,7 @@ public:
 private:
     std::ostream& os;
     std::vector<char> bufv;
+    const Color color;
     const bool ascii;
 };
 

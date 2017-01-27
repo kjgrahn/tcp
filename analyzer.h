@@ -1,6 +1,6 @@
 /* -*- c++ -*-
  *
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,8 @@
 
 class Analyzer {
 public:
-    Analyzer(std::ostream& os, unsigned width, bool ascii, int link);
+    Analyzer(std::ostream& os, unsigned width, bool color, bool ascii,
+	     int link);
     void feed(const pcap_pkthdr& head,
 	      const u_char* data);
     void end();

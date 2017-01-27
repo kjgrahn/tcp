@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -108,23 +108,25 @@ int main(int argc, char** argv)
 
     const string prog = argv[0] ? argv[0] : "tcp";
     const string usage = string("usage: ")
-	+ prog + " [-w width] [-a] [-i iface | -r file] [expression]\n"
+	+ prog + " [-w width] [-c] [-a] [-i iface | -r file] [expression]\n"
 	"       "
 	+ prog + " --help";
     constexpr struct option long_options[] = {
 	{"help",  0, 0, 'H'},
 	{"width", 1, 0, 'w'},
+	{"color", 0, 0, 'c'},
 	{"ascii", 0, 0, 'a'},
 	{0, 0, 0, 0}
     };
 
     unsigned width = 80;
+    bool color = false;
     bool ascii = false;
     std::string iface;
     std::string file;
     
     int ch;
-    while((ch = getopt_long(argc, argv, "w:ai:r:",
+    while((ch = getopt_long(argc, argv, "w:cai:r:",
 			    &long_options[0], 0)) != -1) {
 	switch(ch) {
 	case 'H':
@@ -133,6 +135,9 @@ int main(int argc, char** argv)
 	    break;
 	case 'w':
 	    width = to_int(optarg);
+	    break;
+	case 'c':
+	    color = true;
 	    break;
 	case 'a':
 	    ascii = true;
@@ -170,7 +175,7 @@ int main(int argc, char** argv)
 	return 1;
     }
 
-    Analyzer analyzer(std::cout, width, ascii,
+    Analyzer analyzer(std::cout, width, color, ascii,
 		      pcap_datalink(p));
 
     while(1) {

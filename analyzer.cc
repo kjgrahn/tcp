@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,9 @@
 
 #include <pcap/pcap.h>
 
-Analyzer::Analyzer(std::ostream& os, unsigned width, bool ascii, int link)
-    : output(os, width, ascii),
+Analyzer::Analyzer(std::ostream& os, unsigned width, bool color, bool ascii,
+		   int link)
+    : output(os, width, color, ascii),
       link(link)
 {}
 

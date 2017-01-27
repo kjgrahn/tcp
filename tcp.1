@@ -3,7 +3,7 @@
 .IP \\fB\\$*
 ..
 .
-.TH tcp 1 "DEC 2016" Tcp "User Manuals"
+.TH tcp 1 "JAN 2017" Tcp "User Manuals"
 .
 .
 .SH "NAME"
@@ -13,6 +13,7 @@ tcp \- replacement for 'tcpflow -CDJ'
 .B tcp
 .RB [ \-w
 .IR n ]
+.RB [ \-c ]
 .RB [ \-a ]
 .RB [ \-i
 .IR iface
@@ -45,13 +46,17 @@ simply prints the contents of each TCP segment, and the
 .BR SYN / FIN / RST
 flags.  It prints the timestamp with millisecond precision,
 prints the source and destination ports,
-and colorizes the output so that data to low ports (presumably
-client-to-server) is yellow and other data is green.
+and optionally colorizes the output.
 .
 .SH "OPTIONS"
 .
 .BP \-w,\ --width\ \fIn
 Output width; default 80 characters.
+.
+.BP \-c,\ --color
+Colorize the output.
+Data to low ports (presumably client-to-server)
+is yellow and other data (server-to-client) is green.
 .
 .BP \-a,\ --ascii
 Print as ASCII instead of hexdumped octets. Anything nonprintable
