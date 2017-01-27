@@ -39,14 +39,14 @@ namespace hex {
 
     using orchis::assert_eq;
 
-    void test_nil()
+    void nil(orchis::TC)
     {
 	std::string s;
 	assert_eq(hexdump(s, 1, data, data), data);
 	assert_eq(s, "");
     }
 
-    void test_simple()
+    void simple(orchis::TC)
     {
 	std::string s;
 	const void * p = data;
@@ -55,7 +55,7 @@ namespace hex {
 	assert_eq(p, data+8);
     }
 
-    void test_almost_enough()
+    void almost_enough(orchis::TC)
     {
 	std::string s;
 	const void * p = data;
@@ -64,7 +64,7 @@ namespace hex {
 	assert_eq(p, data+7);
     }
 
-    void test_lines()
+    void lines(orchis::TC)
     {
 	std::string s;
 	const void * p = data;

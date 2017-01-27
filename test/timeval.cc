@@ -32,13 +32,13 @@ namespace {
 
 namespace tv {
 
-    void test_simple()
+    void simple(orchis::TC)
     {
 	orchis::assert_eq(str({now(), 0u}),
 			  "13:16:59.000");
     }
 
-    void test_rounding()
+    void rounding(orchis::TC)
     {
 	orchis::assert_eq(str({now(), 0u}),
 			  "13:16:59.000");
