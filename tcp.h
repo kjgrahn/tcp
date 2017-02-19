@@ -43,7 +43,7 @@ public:
     bool client() const { return src > dst; }
     std::string src_dst() const;
 
-    bool flag_only() const { return flag.size(); }
+    bool has_flag() const { return flag.size(); }
     std::string flag_desc() const { return flag; }
 
     const uint8_t* begin() const { return payload.begin(); }

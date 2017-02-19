@@ -353,5 +353,68 @@ namespace analyzer {
 
 	    assert_eof(ss);
 	}
+
+	void data_fin(orchis::TC)
+	{
+	    std::stringstream ss;
+	    Analyzer a{ss, 1000, false, false, DLT_RAW};
+
+	    feed(a,
+		 "4500 002a"
+		 "d56b 4000"
+		 "4006 27f3"
+		 "c0a8de0a"
+		 "c0a8de03"
+		 "ffff 0009"
+		 "00000000 00000000"
+		 "5011 0000"
+		 "aaaa 0000"
+		 "4711");
+	    assert_read(ss, "65535 ->     9  47 11");
+	    assert_read(ss, "65535 ->     9  FIN");
+	    assert_eof(ss);
+	}
+
+	void data_opt_fin(orchis::TC)
+	{
+	    std::stringstream ss;
+	    Analyzer a{ss, 1000, false, false, DLT_RAW};
+
+	    feed(a,
+		 "4500 002e"
+		 "d56b 4000"
+		 "4006 27f3"
+		 "c0a8de0a"
+		 "c0a8de03"
+		 "ffff 0009"
+		 "00000000 00000000"
+		 "6011 0000"
+		 "aaaa 0000"
+		 "cccc cccc"
+		 "4711");
+	    assert_read(ss, "65535 ->     9  47 11");
+	    assert_read(ss, "65535 ->     9  FIN");
+	    assert_eof(ss);
+	}
+
+	void opt_syn(orchis::TC)
+	{
+	    std::stringstream ss;
+	    Analyzer a{ss, 1000, false, false, DLT_RAW};
+
+	    feed(a,
+		 "4500 0036"
+		 "d56b 4000"
+		 "4006 27f3"
+		 "c0a8de0a"
+		 "c0a8de03"
+		 "ffff 0009"
+		 "00000000 00000000"
+		 "8012 0000"
+		 "aaaa 0000"
+		 "ffffffff ffffffff ffffffff");
+	    assert_read(ss, "65535 ->     9  SYN");
+	    assert_eof(ss);
+	}
     }
 }

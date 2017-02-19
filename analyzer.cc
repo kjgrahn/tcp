@@ -53,18 +53,17 @@ void Analyzer::feed(const pcap_pkthdr& head,
     const Tcp segment{payload};
     if(!segment.valid()) return;
 
-    if(segment.flag_only()) {
+    if(!segment.empty()) {
+	output.write(segment.client(), head.ts,
+		     segment.src_dst(),
+		     segment.begin(), segment.end());
+    }
+
+    if(segment.has_flag()) {
 	output.write(segment.client(), head.ts,
 		     segment.src_dst(),
 		     segment.flag_desc());
-        return;
     }
-
-    if(segment.empty()) return;
-
-    output.write(segment.client(), head.ts,
-		 segment.src_dst(),
-		 segment.begin(), segment.end());
 }
 
 void Analyzer::end()
