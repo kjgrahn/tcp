@@ -32,6 +32,7 @@
 
 #include <pcap/pcap.h>
 
+class Tcp;
 
 class Analyzer {
 public:
@@ -44,6 +45,9 @@ public:
 private:
     Output output;
     const int link;
+
+    void feed(const pcap_pkthdr& head,
+	      const Tcp& segment);
 };
 
 #endif

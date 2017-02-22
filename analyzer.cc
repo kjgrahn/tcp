@@ -53,6 +53,12 @@ void Analyzer::feed(const pcap_pkthdr& head,
     const Tcp segment{payload};
     if(!segment.valid()) return;
 
+    feed(head, segment);
+}
+
+void Analyzer::feed(const pcap_pkthdr& head,
+		    const Tcp& segment)
+{
     if(!segment.empty()) {
 	output.write(segment.client(), head.ts,
 		     segment.src_dst(),
