@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2017 Jörgen Grahn
  * All rights reserved.
  *
  */
@@ -80,7 +80,7 @@ namespace analyzer {
 		 "c0a8de0a"
 		 "c0a8de03"
 		 "b9f2 0009"
-		 "0d3d986c 203ed424"
+		 "0d3d9872 203ed424"
 		 "5018 00e5"
 		 "50e5 0000"
 		 "736d 6563 6b0a");
@@ -327,7 +327,7 @@ namespace analyzer {
 		 "c0a8de0a"
 		 "c0a8de03"
 		 "ffff 0009"
-		 "00000000 00000000"
+		 "00000001 00000000"
 		 "5012 0000"
 		 "aaaa 0000");
 	    assert_read(ss, "65535 ->     9  SYN");
@@ -339,7 +339,7 @@ namespace analyzer {
 		 "c0a8de0a"
 		 "c0a8de03"
 		 "ffff 0009"
-		 "00000000 00000000"
+		 "00000002 00000000"
 		 "5014 0000"
 		 "aaaa 0000");
 	    assert_read(ss, "65535 ->     9  RST");
@@ -351,7 +351,7 @@ namespace analyzer {
 		 "c0a8de0a"
 		 "c0a8de03"
 		 "ffff 0009"
-		 "00000000 00000000"
+		 "00000003 00000000"
 		 "5010 0000"
 		 "aaaa 0000");
 
@@ -362,10 +362,23 @@ namespace analyzer {
 		 "c0a8de0a"
 		 "c0a8de03"
 		 "ffff 0009"
-		 "00000000 00000000"
+		 "00000003 00000000"
 		 "5000 0000"
 		 "aaaa 0000");
 
+	    feed(a,
+		 "4500 0029"
+		 "d56b 4000"
+		 "4006 27f3"
+		 "c0a8de0a"
+		 "c0a8de03"
+		 "ffff 0009"
+		 "00000003 00000000"
+		 "5000 0000"
+		 "aaaa 0000"
+		 "69");
+
+	    assert_read(ss, "65535 ->     9  69");
 	    assert_eof(ss);
 	}
 

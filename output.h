@@ -28,6 +28,8 @@
 #ifndef TCP_OUTPUT_H
 #define TCP_OUTPUT_H
 
+#include "sequence.h"
+
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -45,6 +47,9 @@ public:
     Output(std::ostream& os, unsigned width,
 	   bool color, bool ascii);
 
+    void write(bool client, const timeval& tv,
+	       const std::string& peers,
+	       Sequence::Verdict verdict);
     void write(bool client, const timeval& tv,
 	       const std::string& peers,
 	       const std::string& flags);

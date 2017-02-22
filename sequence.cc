@@ -1,8 +1,6 @@
-/* -*- c++ -*-
- *
- * Copyright (c) 2016, 2017 Jörgen Grahn
+/* Copyright (c) 2017 Jörgen Grahn
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -13,7 +11,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -25,32 +23,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TCP_ANALYZER_H
-#define TCP_ANALYZER_H
-
-#include "output.h"
 #include "sequence.h"
 
-#include <unordered_map>
-#include <pcap/pcap.h>
+#include "tcp.h"
 
-class Tcp;
+Sequence::Sequence(const Tcp& tcp)
+    : next(tcp.next())
+{}
 
-class Analyzer {
-public:
-    Analyzer(std::ostream& os, unsigned width, bool color, bool ascii,
-	     int link);
-    void feed(const pcap_pkthdr& head,
-	      const u_char* data);
-    void end();
+Sequence::Verdict Sequence::feed(const Tcp& tcp)
+{
+    uint32_t begin = tcp.seqno();
+    uint32_t end = tcp.next();
 
-private:
-    std::unordered_map<unsigned, Sequence> seqs;
-    Output output;
-    const int link;
-
-    void feed(const pcap_pkthdr& head,
-	      const Tcp& segment);
-};
-
-#endif
+    /* The cases are:
+     *
+     * ============= (existing sequence)
+     *              ===== normal case
+     *              ..=== hole
+     *           ======== overlap
+     *        ======      duplication
+     *      ======..      duplication
+     *
+     * It's done modulo uint32_t, but let's ignore that.  The normal
+     * case is covered, and getting the others wrong just at the 4 GB
+     * border is rare and fairly harmless.
+     */
+    if(begin==next) {
+	next = end;
+	return Verdict::NORMAL;
+    }
+    if(begin > next) {
+	next = end;
+	return Verdict::HOLE;
+    }
+    if(begin < next && next < end) {
+	next = end;
+	return Verdict::OVERLAP;
+    }
+    return Verdict::DUPLICATE;
+}

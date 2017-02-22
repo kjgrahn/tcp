@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

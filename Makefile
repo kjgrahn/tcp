@@ -1,6 +1,6 @@
 # Makefile
 #
-# Copyright (c) 2016 Jörgen Grahn
+# Copyright (c) 2016, 2017 Jörgen Grahn
 # All rights reserved.
 
 SHELL=/bin/bash
@@ -12,6 +12,7 @@ INSTALLBASE=/usr/local
 
 libtcp.a: output.o
 libtcp.a: analyzer.o
+libtcp.a: sequence.o
 libtcp.a: tcp.o
 libtcp.a: packet.o
 libtcp.a: timeval.o

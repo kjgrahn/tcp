@@ -63,6 +63,31 @@ Output::Output(std::ostream& os, unsigned width,
       ascii(ascii)
 {}
 
+namespace {
+    std::ostream& operator<< (std::ostream& os, Sequence::Verdict val)
+    {
+	switch(val) {
+	case Sequence::Verdict::DUPLICATE:
+	    return os << "[DUP]";
+	case Sequence::Verdict::HOLE:
+	    return os << "[HOLE]";
+	case Sequence::Verdict::OVERLAP:
+	    return os << "[OVERLAP]";
+	default:
+	    return os;
+	}
+    }
+}
+
+void Output::write(bool client, const timeval& tv,
+		   const std::string& peers,
+		   Sequence::Verdict verdict)
+{
+    os << tv << ' '
+       << color(client) << peers << "  "
+       << verdict << color.reset << std::endl;
+}
+
 void Output::write(bool client, const timeval& tv,
 		   const std::string& peers,
 		   const std::string& flags)

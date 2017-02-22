@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -47,6 +47,11 @@ std::string Tcp::src_dst() const
     char buf[20];
     std::sprintf(buf, "%5u -> %5u", src, dst);
     return buf;
+}
+
+unsigned Tcp::key() const
+{
+    return (src << 16) + dst;
 }
 
 /**

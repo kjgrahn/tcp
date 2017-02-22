@@ -49,6 +49,23 @@ flags.  It prints the timestamp with millisecond precision,
 prints the source and destination ports,
 and optionally colorizes the output.
 .
+.SH "Retransmissions"
+.B tcp
+tries to avoid confusing you when the TCP sequences have irregularities,
+like retransmissions or out-of-order segments.
+To this end, a segment which doesn't just complement earlier ones is
+.I not
+printed, and a message about duplication, overlap or a hole is
+printed instead.
+.PP
+You should see that as a hint that you need to do a deeper analysis
+using
+.BR tcpdump (1)
+or similar, because what
+.B tcp
+displays in that scenario may not reflect what reaches the application \-
+the TCP stack is better at stitching together confused segments.
+.
 .SH "OPTIONS"
 .
 .BP \-w,\ --width\ \fIn
@@ -94,11 +111,9 @@ In particular the one used for the
 .B any
 pseudo-interface is not supported.
 .IP \-
-There's no handling of TCP state.  Segments are printed as-is;
-if data is retransmitted you'll see it twice
-(this can be confusing).
-ACKs and sequence numbers in general aren't handled at all.
-(Thus the \[lq]when TCP itself is trouble-free\[rq] above).
+Apart from the detection of anomalities in the data streams described
+above, there's no handling of TCP state.
+ACKs, windows and so on aren't handled at all.
 .IP \-
 TCP sessions are identified only by the port numbers involved.
 This is for readability purposes, but also makes it hard to watch

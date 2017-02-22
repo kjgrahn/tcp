@@ -1,6 +1,6 @@
 /* -*- c++ -*-
  *
- * Copyright (c) 2016 Jörgen Grahn
+ * Copyright (c) 2016, 2017 Jörgen Grahn
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@ public:
 
     bool client() const { return src > dst; }
     std::string src_dst() const;
+    unsigned key() const;
 
     bool has_flag() const { return flags & 7; }
     const char* flag_desc() const;

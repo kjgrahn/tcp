@@ -59,6 +59,21 @@ void Analyzer::feed(const pcap_pkthdr& head,
 void Analyzer::feed(const pcap_pkthdr& head,
 		    const Tcp& segment)
 {
+    const auto& key = segment.key();
+    auto it = seqs.find(key);
+    if (it==std::end(seqs)) {
+	seqs.emplace(key, Sequence{segment});
+    }
+    else {
+	Sequence::Verdict v = it->second.feed(segment);
+	if(v) {
+	    output.write(segment.client(), head.ts,
+			 segment.src_dst(),
+			 v);
+	    return;
+	}
+    }
+
     if(!segment.empty()) {
 	output.write(segment.client(), head.ts,
 		     segment.src_dst(),
