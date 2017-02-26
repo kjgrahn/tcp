@@ -56,6 +56,14 @@ unsigned Range::eat16()
     return n;
 }
 
+unsigned Range::eat32()
+{
+    unsigned n = eat16();
+    n <<= 16;
+    n |= eat16();
+    return n;
+}
+
 /**
  * Stripping the link-layer from a frame; extracting IPv4/IPv6,
  * or returning an empty range.

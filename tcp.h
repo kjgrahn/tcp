@@ -43,8 +43,11 @@ public:
     bool client() const { return src > dst; }
     std::string src_dst() const;
 
-    bool has_flag() const { return flag.size(); }
-    std::string flag_desc() const { return flag; }
+    bool has_flag() const { return flags & 7; }
+    const char* flag_desc() const;
+
+    unsigned seqno() const { return seq_no; }
+    unsigned next() const;
 
     const uint8_t* begin() const { return payload.begin(); }
     const uint8_t* end() const { return payload.end(); }
@@ -54,7 +57,8 @@ private:
     Range payload;
     unsigned src;
     unsigned dst;
-    std::string flag;
+    unsigned seq_no;
+    unsigned flags;
 };
 
 #endif

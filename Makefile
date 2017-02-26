@@ -34,6 +34,7 @@ checkv: test/test
 test/libtest.a: test/hexdump.o
 test/libtest.a: test/timeval.o
 test/libtest.a: test/analyzer.o
+test/libtest.a: test/tcp.o
 test/libtest.a: test/hexread.o
 	$(AR) -r $@ $^
 

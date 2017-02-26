@@ -54,10 +54,12 @@ public:
     }
     unsigned eat8() { return *a++; }
     unsigned eat16();
+    unsigned eat32();
 
     const uint8_t* begin() const { return a; }
     const uint8_t* end() const { return b; }
     bool empty() const { return a==b; }
+    size_t size() const { return b - a; }
 
 private:
     const uint8_t* a;
