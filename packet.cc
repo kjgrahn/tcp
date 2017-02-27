@@ -121,12 +121,16 @@ Range tcp(int linktype, Range frame)
 	return frame;
     }
     else if(version==6) {
+	frame.pop(4);
+	unsigned plen = frame.eat16();
+	unsigned nh = frame.eat8();
+	frame.pop(1 + 8*4);
 	// lame implementation
-	if(p[6]!=6) {
+	if(nh!=6) {
 	    return frame.clear();
 	}
 
-	frame.pop(40);
+	frame.trim(plen);
 	return frame;
     }
     else {

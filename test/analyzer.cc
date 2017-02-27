@@ -209,6 +209,21 @@ namespace analyzer {
 		 "736d 6563 6b0a");
 
 	    assert_read(ss, ref);
+
+	    feed(a,
+		 "6100 0000"
+		 "0021 0640"
+		 "2001 0470 0028 04cf 0230 05ff fed0 c6bb"
+		 "2001 0470 0028 04cf 0000 0000 0000 0002"
+		 "9ab3 0016"
+		 "55c4aa03 4c467f41"
+		 "8010 0598"
+		 "ffff 0000"
+		 "0101080a 04103e77 1401ce4f"
+		 "69"
+		 "c27d 5ffa");
+
+	    assert_read(ss, "39603 ->    22  69");
 	    assert_eof(ss);
 	}
 
