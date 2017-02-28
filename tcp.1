@@ -2,6 +2,7 @@
 .de BP
 .IP \\fB\\$*
 ..
+.hw si-tu-ations
 .
 .TH tcp 1 "FEB 2017" Tcp "User Manuals"
 .
@@ -66,10 +67,9 @@ is replaced by dots (so you lose information this way).
 Listen on
 .IR iface ,
 e.g.
-.BR eth0 ,
-.B lo
+.B eth0
 or
-.BR any .
+.BR lo .
 .
 .BP \-r\ \fIfile
 Read packets from
@@ -90,6 +90,9 @@ Packets with IPv6 extension headers aren't handled well.
 .IP \-
 Odd capture formats aren't handled well.
 I've only added support for Ethernet captures, VLAN, and raw IP captures.
+In particular the one used for the
+.B any
+pseudo-interface is not supported.
 .IP \-
 There's no handling of TCP state.  Segments are printed as-is;
 if data is retransmitted you'll see it twice
