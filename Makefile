@@ -48,7 +48,8 @@ test/test: test/test.o test/libtest.a libtcp.a
 	$(CXX) $(CXXFLAGS) -o $@ test/test.o -Ltest/ -ltest -L. -ltcp
 
 .PHONY: install
-install: all
+install: tcp
+install: tcp.1
 	install -m555 tcp $(INSTALLBASE)/bin/
 	install -m644 tcp.1 $(INSTALLBASE)/man/man1/
 
