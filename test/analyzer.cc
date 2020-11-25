@@ -35,7 +35,7 @@ namespace {
     void assert_read(std::istream& is, const std::string& ref)
     {
 	std::string s;
-	orchis::assert_true(std::getline(is, s));
+	orchis::assert_true(bool{std::getline(is, s)});
 	erase_timestamp(s);
 	orchis::assert_eq(s, ref);
     }
@@ -43,7 +43,7 @@ namespace {
     void assert_eof(std::istream& is)
     {
 	std::string s;
-	orchis::assert_false(std::getline(is, s));
+	orchis::assert_false(bool{std::getline(is, s)});
     }
 }
 

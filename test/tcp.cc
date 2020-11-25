@@ -8,6 +8,7 @@
 
 #include <orchis.h>
 #include <sstream>
+#include <vector>
 #include <ctime>
 #include <cassert>
 

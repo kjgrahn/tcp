@@ -34,7 +34,7 @@
 #include <string>
 #include <vector>
 
-class timeval;
+struct timeval;
 
 struct Color {
     explicit Color(bool color);
