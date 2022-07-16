@@ -53,6 +53,31 @@ namespace {
 	return oss.str();
     }
 
+    pcap_t* open_live(const std::string& device, int snaplen, char* errbuf)
+    {
+	pcap_t* const p = pcap_create(device.c_str(), errbuf);
+	if (!p) return p;
+
+	int err;
+	auto fail = [&] (const char* s) {
+	    std::snprintf(errbuf, PCAP_ERRBUF_SIZE,
+			  "error: %s failed with code %d",
+			  s, err);
+	    return nullptr;
+	};
+
+	err = pcap_set_promisc(p, 0);
+	if (err) return fail("pcap_set_promisc");
+	err = pcap_set_snaplen(p, snaplen);
+	if (err) return fail("pcap_set_snaplen");
+	err = pcap_set_immediate_mode(p, 1);
+	if (err) return fail("pcap_set_immediate_mode");
+	err = pcap_activate(p);
+	if (err) return fail("pcap_activate");
+
+	return p;
+    }
+
     pcap_t* open(const std::string& iface, const std::string& file,
 		 const std::string& program)
     {
@@ -63,8 +88,7 @@ namespace {
 	    p = pcap_open_offline(file.c_str(), errbuf);
 	}
 	else {
-	    p = pcap_open_live(iface.c_str(), 65000,
-			       0, 0, errbuf);
+	    p = open_live(iface.c_str(), 65000, errbuf);
 	}
 
 	if(!p) {
