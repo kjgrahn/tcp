@@ -39,15 +39,28 @@ on application-level protocols like HTTP).
 With the
 .B \-CD
 options to print to stdout it is underdeveloped: the output
-lacks timestamps and SYN/FIN/RST information.
+lacks timestamps and \s-2SYN/FIN/RST\s0 information.
+.\" Or at least this was the case in 2016.
 .
 .PP
 .B tcp
 simply prints the contents of each TCP segment, and the
-.BR SYN / FIN / RST
+.BR \s-1SYN / FIN / RST\s0
 flags.  It prints the timestamp with millisecond precision,
 prints the source and destination ports,
 and optionally colorizes the output.
+For example:
+.
+.nf
+.IP
+.ft CW
+08:53:39.918 46434 ->  4711  SYN
+08:53:39.919  4711 -> 46434  SYN
+08:53:39.919 46434 ->  4711  Hello, world!.
+08:53:39.919  4711 -> 46434  ok.
+08:53:47.956  4711 -> 46434  FIN
+08:53:47.956 46434 ->  4711  FIN
+.fi
 .
 .SH "Retransmissions"
 .B tcp
@@ -63,8 +76,8 @@ using
 .BR tcpdump (1)
 or similar, because what
 .B tcp
-displays in that scenario may not reflect what reaches the application \-
-the TCP stack is better at stitching together confused segments.
+displays in that scenario may not reflect what reaches the application.
+The TCP stack is better at stitching together confused segments.
 .
 .SH "OPTIONS"
 .
@@ -94,7 +107,7 @@ or
 .BP \-r\ \fIfile
 Read packets from
 .IR file .
-.B -
+.B \-
 means standard input.
 .
 .IP \fIexpression
