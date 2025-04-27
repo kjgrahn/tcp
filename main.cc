@@ -134,9 +134,12 @@ int main(int argc, char** argv)
     const string usage = string("usage: ")
 	+ prog + " [-w width] [-c] [-a] [-i iface | -r file] [expression]\n"
 	"       "
-	+ prog + " --help";
+	+ prog + " --help\n"
+	"       "
+	+ prog + " --version";
     constexpr struct option long_options[] = {
 	{"help",  0, 0, 'H'},
+	{"version",  0, 0, 'V'},
 	{"width", 1, 0, 'w'},
 	{"color", 0, 0, 'c'},
 	{"ascii", 0, 0, 'a'},
@@ -155,6 +158,11 @@ int main(int argc, char** argv)
 	switch(ch) {
 	case 'H':
 	    std::cout << usage << '\n';
+	    return 0;
+	    break;
+	case 'V':
+	    std::cout << "tcp 1.1\n"
+		      << "Copyright (c) 2016--2025 J. Grahn\n";
 	    return 0;
 	    break;
 	case 'w':
