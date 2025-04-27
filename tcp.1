@@ -4,7 +4,7 @@
 ..
 .hw si-tu-ations
 .
-.TH tcp 1 "APR 2017" Tcp "User Manuals"
+.TH tcp 1 "APR 2025" Tcp "User Manuals"
 .
 .
 .SH "NAME"
@@ -79,6 +79,20 @@ or similar, because what
 displays in that scenario may not reflect what reaches the application.
 The TCP stack is better at stitching together confused segments.
 .
+.SH "Link layers"
+.B tcp
+has support for plain
+.BR Ethernet ,
+.B "802.1Q VLAN"
+over Ethernet,
+.BR DLT_RAW
+and
+.B DLT_LINUX_SLL2
+(Linux
+.IR "tcpdump \-iany" ).
+The list is a bit arbitrary: it's simply the types I've needed and had access
+to over the years.
+.
 .SH "OPTIONS"
 .
 .BP \-w,\ --width\ \fIn
@@ -120,12 +134,6 @@ for syntax.
 IP fragments are ignored.
 .IP \-
 Packets with IPv6 extension headers aren't handled well.
-.IP \-
-Odd capture formats aren't handled well.
-I've only added support for Ethernet captures, VLAN, and raw IP captures.
-In particular the one used for the
-.B any
-pseudo-interface is not supported.
 .IP \-
 Apart from the detection of anomalities in the data streams described
 above, there's no handling of TCP state.

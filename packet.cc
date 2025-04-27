@@ -88,6 +88,23 @@ Range unlink(int linktype, Range frame)
 	}
 	break;
     }
+    case DLT_LINUX_SLL2: {
+	unsigned etype = frame.eat16();
+	frame.pop(12+8-2);
+	if(etype==ETHERTYPE_VLAN) {
+	    frame.pop(2);
+	    etype = frame.eat16();
+	}
+	switch(etype) {
+	case ETHERTYPE_IP:
+	case ETHERTYPE_IPV6:
+	    break;
+	default:
+	    frame.clear();
+	    break;
+	}
+	break;
+    }
     case DLT_RAW:
 	break;
     default:
